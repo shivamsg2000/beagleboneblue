@@ -3,11 +3,15 @@
 MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     : cs(cs),
     
-      slSystemOff("System is offline"),
-      slSystemOn("System is online"),
+      slSystemOff("Offline"),
+      slSystemOn("Online"),
+      slMotorOn("Idling"),
+      slMoving("Moving"),
+      slError("Error"),
+      slEmergency("Emergency"),
 
-      doSystemOn("Startup the system"),
-      doSystemOff("Shutdown the system")
+      doSystemOn("Startup BBB"),
+      doSystemOff("Shutdown BBB")
 {
     eeros::hal::HAL &hal = eeros::hal::HAL::instance();
 
@@ -24,10 +28,28 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     // Add all safety levels to the safety system
     addLevel(slSystemOff);
     addLevel(slSystemOn);
+    addLevel(slMotorOn);
+    addLevel(slMoving);
+    addLevel(slError);
+    addLevel(slEmergency);
 
     // Add events to individual safety levels
     slSystemOff.addEvent(doSystemOn, slSystemOn, kPublicEvent);
     slSystemOn.addEvent(doSystemOff, slSystemOff, kPublicEvent);
+    slSystemOn.addEvent(doMotorOn, slMotorOn, kPublicEvent);
+    slMotorOn.addEvent(doMotorOff, slSystemOn, kPublicEvent);
+    slMotorOn.addEvent(evStartMotion, slMoving, kPublicEvent);
+    slMoving.addEvent(evStopMotion, slMotorOn, kPublicEvent);
+    slMoving.addEvent(evSetEmergency, slEmergency, kPublicEvent);
+    slMotorOn.addEvent(evSetEmergency, slEmergency, kPublicEvent);
+    slEmergency.addEvent(evUndoEmergency, slMoving, kPublicEvent);
+    slEmergency.addEvent(evEmergencyError, slError, kPublicEvent);
+    slError.addEvent(evErrorReset, slSystemOn, kPublicEvent);
+    slError.addEvent(evErrorRecovery, slMotorOn, kPublicEvent);
+    slMoving.addEvent(evMovingError, slError, kPublicEvent);
+    slMotorOn.addEvent(evMotionStartError, slError, kPublicEvent);
+
+
 
     // Add events to multiple safety levels
     // addEventToAllLevelsBetween(lowerLevel, upperLevel, event, targetLevel, kPublicEvent/kPrivateEvent);
@@ -46,6 +68,28 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     slSystemOn.setLevelAction([&](SafetyContext *privateContext) {
         cs.timedomain.start();
+    });
+
+    slMotorOn.setLevelAction([&](SafetyContext *privateContext) {
+        // Start PWM output, enable motors
+        // Example: motorEnable->set(true);
+    });
+    
+    slMoving.setLevelAction([&](SafetyContext *privateContext) {
+        // Robot is moving; keep everything running
+        // Could monitor motion status here
+    });
+    
+    slEmergency.setLevelAction([&](SafetyContext *privateContext) {
+        cs.timedomain.stop();
+        // Disable motors immediately
+        // Example: motorEnable->set(false);
+        // Log or blink LED
+    });
+    
+    slError.setLevelAction([&](SafetyContext *privateContext) {
+        cs.timedomain.stop();
+        // Also disable motors, log error
     });
 
     // Define entry level
