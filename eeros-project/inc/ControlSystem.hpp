@@ -5,6 +5,8 @@
 #include <eeros/core/Executor.hpp>
 #include <eeros/control/Constant.hpp>
 #include <eeros/control/Gain.hpp>
+#include <eeros/hal/Input.hpp>
+#include <eeros/hal/Output.hpp>
 
 using namespace eeros::control;
 
@@ -18,6 +20,10 @@ public:
     Gain<> myGain;
 
     TimeDomain timedomain;
+
+    eeros::hal::Input<bool>* buttonMode;
+    eeros::hal::Output<bool>* led1;
+    eeros::hal::Output<bool>* led2;
 };
 
 #endif // CONTROLSYSTEM_HPP

@@ -43,7 +43,13 @@ int main(int argc, char **argv)
     log.info() << "Initializing executor...";
     auto &executor = eeros::Executor::instance();
     executor.setMainTask(ss);
+
+
     ss.triggerEvent(sp.doSystemOn);
+
+    // Code for toggling LEDs based on button: LEDs represent 2 states: slMotorOn (motor on but idling) and slSystemOn (motor off but system on)
+    
+
     executor.run();
 
     mainSequence.wait();

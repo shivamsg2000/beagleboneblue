@@ -10,8 +10,19 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
       slError("Error"),
       slEmergency("Emergency"),
 
-      doSystemOn("Startup BBB"),
-      doSystemOff("Shutdown BBB")
+      doSystemOn("Startup system"),
+      doSystemOff("Shutdown system"),
+      doMotorOn("Turn On motor"),
+      doMotorOff("Turn Off motor"),
+      evStartMotion("Start Motion"),
+      evStopMotion("Stop motion"),
+      evSetEmergency("Set Emergency"),
+      evUndoEmergency("Undo Emergency"),
+      evEmergencyError("Emergency caused Error"),
+      evErrorReset("Error Reset to startup"),
+      evErrorRecovery("Error recovered and ready"),
+      evMovingError("Error during motion"),
+      evMotionStartError("Error before moving")
 {
     eeros::hal::HAL &hal = eeros::hal::HAL::instance();
 
@@ -62,17 +73,21 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     // Define and add level actions
     slSystemOff.setLevelAction([&](SafetyContext *privateContext) {
-        cs.timedomain.stop();
+        // cs.timedomain.stop();
         eeros::Executor::stop();
     });
 
     slSystemOn.setLevelAction([&](SafetyContext *privateContext) {
-        cs.timedomain.start();
+        // cs.timedomain.start();
+        cs.led1->set(false);  // LED1 Off
+        cs.led2->set(true);   // LED2 On
     });
 
     slMotorOn.setLevelAction([&](SafetyContext *privateContext) {
         // Start PWM output, enable motors
         // Example: motorEnable->set(true);
+        cs.led1->set(true);   // LED1 On
+        cs.led2->set(false);  // LED2 Off
     });
     
     slMoving.setLevelAction([&](SafetyContext *privateContext) {
@@ -81,14 +96,14 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
     });
     
     slEmergency.setLevelAction([&](SafetyContext *privateContext) {
-        cs.timedomain.stop();
+        // cs.timedomain.stop();
         // Disable motors immediately
         // Example: motorEnable->set(false);
         // Log or blink LED
     });
     
     slError.setLevelAction([&](SafetyContext *privateContext) {
-        cs.timedomain.stop();
+        // cs.timedomain.stop();
         // Also disable motors, log error
     });
 
