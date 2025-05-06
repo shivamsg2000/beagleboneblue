@@ -79,15 +79,11 @@ MyRobotSafetyProperties::MyRobotSafetyProperties(ControlSystem &cs, double dt)
 
     slSystemOn.setLevelAction([&](SafetyContext *privateContext) {
         // cs.timedomain.start();
-        cs.led1->set(false);  // LED1 Off
-        cs.led2->set(true);   // LED2 On
     });
 
     slMotorOn.setLevelAction([&](SafetyContext *privateContext) {
         // Start PWM output, enable motors
         // Example: motorEnable->set(true);
-        cs.led1->set(true);   // LED1 On
-        cs.led2->set(false);  // LED2 Off
     });
     
     slMoving.setLevelAction([&](SafetyContext *privateContext) {

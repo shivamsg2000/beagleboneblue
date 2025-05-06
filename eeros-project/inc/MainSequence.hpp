@@ -29,19 +29,6 @@ public:
         bool last = false;
 
         while (eeros::sequencer::Sequencer::running) {
-            bool current = cs.buttonMode->get(); // what the button is *now*
-
-            if (current && !last) {  // Rising edge detected // This means: last was false, now it's true → just pressed!
-                auto currentLevel = ss.getCurrentLevel(); 
-
-                if (currentLevel == sp.slSystemOn) {
-                    ss.triggerEvent(sp.doMotorOn);
-                } else if (currentLevel == sp.slMotorOn) {
-                    ss.triggerEvent(sp.doMotorOff);
-                }
-            }
-
-            last = current;
 
             sleep(0.05);  // 50 ms debounce delay
         }
