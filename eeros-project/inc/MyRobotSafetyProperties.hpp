@@ -3,6 +3,8 @@
 
 #include <eeros/safety/SafetyProperties.hpp>
 #include <eeros/hal/HAL.hpp>
+#include <eeros/hal/Input.hpp>
+#include <eeros/hal/Output.hpp>
 #include "ControlSystem.hpp"
 
 class MyRobotSafetyProperties : public eeros::safety::SafetyProperties
@@ -40,10 +42,12 @@ public:
 
 private:
     // Define all critical outputs
-    // eeros::hal::Output<bool>* ...;
+    eeros::hal::Output<bool>* stationLED; // LED2
+    eeros::hal::Output<bool>* moveLED; // LED1
 
     // Define all critical inputs
-    // eeros::hal::Input<bool>* ...;
+    eeros::hal::Input<bool>* eStopButton; // BUTTON2
+    eeros::hal::Input<bool>* operateButton; // BUTTON1
 
     ControlSystem &cs;
 };

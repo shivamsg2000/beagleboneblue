@@ -19,18 +19,35 @@ public:
           sp(sp),
           cs(cs),
 
-          sleep("Sleep", this)
+          sleep("", this)
     {
         log.info() << "Sequence created: " << name;
+        // sleep.somethingToChangeLogLevel(ERROR or WARN)
+        
     }
 
     int action()
     {
-        bool last = false;
+        // bool last = false;
+        // int pressCnt = 0;
 
         while (eeros::sequencer::Sequencer::running) {
 
-            sleep(0.05);  // 50 ms debounce delay
+            // bool current = cs.buttonMode.getOut().getSignal().getValue();
+            // log.info() << current;
+            // if (current != last) {
+            //     pressCnt ++;
+            //     log.info() << "ButtonMode pressed " << pressCnt;
+
+            //     if (ss.getCurrentLevel() == sp.slSystemOn) {
+            //         ss.triggerEvent(sp.doMotorOn);
+            //     }
+            //     else if (ss.getCurrentLevel() == sp.slMotorOn) {
+            //         ss.triggerEvent(sp.doMotorOff);
+            //     }
+            // }
+
+            // sleep(0.05);  // 50 ms debounce delay
         }
 
         return 0;

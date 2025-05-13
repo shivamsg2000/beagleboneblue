@@ -22,12 +22,16 @@ int main(int argc, char **argv)
 
     log.info() << "Starting template project...";
 
-    // log.info() << "Initializing hardware...";
-    // eeros::hal::HAL& hal = eeros::hal::HAL::instance();
-    // hal.readConfigFromFile(&argc, argv);
+    log.info() << "Initializing hardware...";
+    eeros::hal::HAL& hal = eeros::hal::HAL::instance();
+    hal.readConfigFromFile(&argc, argv);
 
     log.info() << "Initializing control system...";
     ControlSystem cs(dt);
+
+    // if (!cs.buttonMode) {
+    //     log.info() << "ButtonMode not initialized!!";
+    // }
 
     log.info() << "Initializing safety system...";
     MyRobotSafetyProperties sp(cs, dt);
@@ -45,7 +49,7 @@ int main(int argc, char **argv)
     executor.setMainTask(ss);
 
 
-    ss.triggerEvent(sp.doSystemOn);
+    ss.triggerEvent(sp.doSystemOff);
 
     // Code for toggling LEDs based on button: LEDs represent 2 states: slMotorOn (motor on but idling) and slSystemOn (motor off but system on)
     

@@ -8,16 +8,19 @@
 #include "customBlocks/Controller.hpp"
 
 using namespace eeros::control;
-
 class ControlSystem
 {
-public:
+    public:
     ControlSystem(double dt);
-
+    
     // Define Blocks
     PeripheralInput<> encoder;
     Controller<> controller;
     PeripheralOutput<> motor;
+    eeros::hal::HAL& hal = eeros::hal::HAL::instance();
+    // PeripheralInput<bool> buttonMode;
+    
+    // eeros::hal::Input<bool>* buttonMode;
 
     TimeDomain timedomain;
 
